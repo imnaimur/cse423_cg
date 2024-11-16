@@ -2,21 +2,27 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 
-width = 1440
-height = 1080
+
+
+width = 760
+height = 480 # 480
 r = 1.0
 g = 1.0
 b = 1.0
 a = 1.0
+direction = 0
 
+rain_positions = [-380, -400, -420, -440,- 460, -480, -500, -520, -540, -560, -580, -600, -620,-360, -340, -320, -300, -280, -260, -240, -220, -200, -180, -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400, 420, 440, 460, 480, 500, 520, 540, 560, 580, 600, 620]
+y1 =height//2 # rain_h =(height//2) - (height//2)-20
+speed = 0.1
 
 def points(x,y):
-    glPointSize(5)
+    glPointSize(2)
     glBegin(GL_POINTS)
     glVertex2f(x,y)
     glEnd()
 
-    
+
 def lines(x1, x2, y1, y2):
 
     glColor3f(r, g, b)
@@ -78,8 +84,39 @@ def house(x,y,rheight = None):
     # lines(-width//2, width//2, 0, 0)
     # lines(0, 0, -height//2, height//2)
 
+
 def rains():
-    pass
+
+    for pos in rain_positions:
+        lines(pos,pos+direction,y1,(y1)-20)
+
+
+def animate():
+
+    glutPostRedisplay()
+    global y1,speed
+    y1=(y1-speed)%240
+
+def specialKeyListener(key, x, y):
+    global speed, direction
+    if key=='w':
+        print(1)
+    if key==GLUT_KEY_UP:
+        speed *= 2
+        print("Speed Increased")
+    if key== GLUT_KEY_DOWN:		#// up arrow key
+        speed /= 2
+        print("Speed Decreased")
+    if key== GLUT_KEY_LEFT:		#// up arrow key
+        direction -= 1
+        print(direction)
+        print("left")
+    if key== GLUT_KEY_RIGHT:		#// up arrow key
+        direction += 1
+        print(direction)
+        print("right")
+    glutPostRedisplay()
+
 
 
 def iterate():
@@ -93,7 +130,8 @@ def iterate():
 def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     # glClearColor(1, 1, 1, 1) 
-    glClearColor(1.0, 1.0, 1.0, 1.0)
+    # glClearColor(1.0, 1.0, 1.0, 1.0)
+    glClearColor(0.0, 0.0, 0.0, 0.0)
     glLoadIdentity()
     gluLookAt(0, 0, 200, 0, 0, 0, 0, 1, 0)
     iterate()
@@ -101,7 +139,7 @@ def display():
     # my work
     house(480,360,120)
     # house(300,240,120)
-
+    rains()
     
     glutSwapBuffers()  
 
@@ -112,4 +150,7 @@ glutInitWindowSize(width, height)  # window size
 glutInitWindowPosition(0, 0)
 wind = glutCreateWindow(b"Lab Assignment 1")  # window name
 glutDisplayFunc(display)
+glutIdleFunc(animate)	#what you want to do in the idle time (when no drawing is occuring)
+glutSpecialFunc(specialKeyListener)
 glutMainLoop()
+# animate()
