@@ -4,17 +4,14 @@ from OpenGL.GLU import *
 
 
 
-width = 760
-height = 480 # 480
-r = 1.0
-g = 1.0
-b = 1.0
-a = 1.0
+width = 1440
+height = 1080 
 direction = 0
 
 rain_positions = [-380, -400, -420, -440,- 460, -480, -500, -520, -540, -560, -580, -600, -620,-360, -340, -320, -300, -280, -260, -240, -220, -200, -180, -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400, 420, 440, 460, 480, 500, 520, 540, 560, 580, 600, 620]
-y1 =height//2 # rain_h =(height//2) - (height//2)-20
+y1 =height//2 
 speed = 0.1
+day_night = 0.0
 
 def points(x,y):
     glPointSize(2)
@@ -25,7 +22,7 @@ def points(x,y):
 
 def lines(x1, x2, y1, y2):
 
-    glColor3f(r, g, b)
+    glColor3f(1.0-day_night, 1.0-day_night, 1.0-day_night)
     glBegin(GL_LINES)
     glVertex2f(x1, y1)
     glVertex2f(x2, y2)
@@ -104,19 +101,36 @@ def specialKeyListener(key, x, y):
     if key==GLUT_KEY_UP:
         speed *= 2
         print("Speed Increased")
-    if key== GLUT_KEY_DOWN:		#// up arrow key
+    if key== GLUT_KEY_DOWN:		
         speed /= 2
         print("Speed Decreased")
-    if key== GLUT_KEY_LEFT:		#// up arrow key
+    if key== GLUT_KEY_LEFT:		
         direction -= 1
         print(direction)
         print("left")
-    if key== GLUT_KEY_RIGHT:		#// up arrow key
+    if key== GLUT_KEY_RIGHT:		
         direction += 1
         print(direction)
         print("right")
     glutPostRedisplay()
+def mouseListener(button, state, x, y):	
+    global day_night
+    if button==GLUT_LEFT_BUTTON:
+        if(state == GLUT_DOWN):   
+            day_night-=0.01
+            print("night shifting")
+        
+    if button==GLUT_RIGHT_BUTTON:
+        if state == GLUT_DOWN: 	
+           day_night+=0.01
+           print("day shifting")
 
+    if day_night<0.0:
+        day_night = 0.0
+    elif day_night>1.0:
+        day_night = 1.0
+
+    glutPostRedisplay()
 
 
 def iterate():
@@ -131,7 +145,7 @@ def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     # glClearColor(1, 1, 1, 1) 
     # glClearColor(1.0, 1.0, 1.0, 1.0)
-    glClearColor(0.0, 0.0, 0.0, 0.0)
+    glClearColor(0.0+day_night, 0.0+day_night, 0.0+day_night, 0.0+day_night)
     glLoadIdentity()
     gluLookAt(0, 0, 200, 0, 0, 0, 0, 1, 0)
     iterate()
@@ -152,5 +166,7 @@ wind = glutCreateWindow(b"Lab Assignment 1")  # window name
 glutDisplayFunc(display)
 glutIdleFunc(animate)	#what you want to do in the idle time (when no drawing is occuring)
 glutSpecialFunc(specialKeyListener)
+glutMouseFunc(mouseListener)
+
 glutMainLoop()
 # animate()
