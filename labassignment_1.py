@@ -117,12 +117,12 @@ def mouseListener(button, state, x, y):
     global day_night
     if button==GLUT_LEFT_BUTTON:
         if(state == GLUT_DOWN):   
-            day_night-=0.01
+            day_night-=0.1
             print("night shifting")
         
     if button==GLUT_RIGHT_BUTTON:
         if state == GLUT_DOWN: 	
-           day_night+=0.01
+           day_night+=0.1
            print("day shifting")
 
     if day_night<0.0:
