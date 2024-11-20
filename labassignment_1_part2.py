@@ -6,29 +6,29 @@ import random
 
 width = 720
 height = 480 
-speed = 0.1
+speed = 1
 spawn = False
 ball = []
 freeze = False
-
 def points(x,y):
-    r = random.randint(0.0,1.0)
-    g = random.randint(0.0,1.0)
-    b = random.randint(0.0,1.0)
-    glColor3f(r,g,b)
+    # glColor3f(r,g,b)
     glPointSize(5)
     glBegin(GL_POINTS)
     glVertex2f(x,y)
     glEnd()
     
-def coordinate(x,y):
+def properties(x,y):
     directions = random.randint(0,3)
-    return [x-width//2, -(y-height//2),directions]
+    r = random.randint(0.0,1.0)
+    g = random.randint(0.0,1.0)
+    b = random.randint(0.0,1.0)
+    return [x-width//2, -(y-height//2),directions,r,g,b]
 
 def ballGen():
     global spawn
     if spawn:
         for i in ball:
+            glColor3f(i[3],i[4],i[5])
             points(i[0],i[1])
 
 
@@ -36,48 +36,49 @@ def animate():
 
     glutPostRedisplay()
     global speed , ball
+    xmax = width//2
+    xmin = xmax * (-1)
+    ymax = height//2
+    ymin = ymax * (-1)
     for i in ball:
-        if i[2] == 0: #NE
-            i[0] =(i[0] +speed)
-            i[1] =(i[1] +speed)
-        if i[2] == 1:   #NW
-            i[0] =(i[0] -speed)
-            i[1] =(i[1] +speed)
-        if i[2] == 2:   #WS
-            i[0] =(i[0]-speed)
-            i[1] =(i[1] -speed)
-        if i[2] == 3:   #SE
-            i[0] =(i[0] +speed)
-            i[1] =(i[1] -speed)
+            if i[2] == 0: #NE
+                i[0] =(i[0] +speed)
+                i[1] =(i[1] +speed)
+            elif i[2] == 1:   #NW
+                i[0] =(i[0] -speed)
+                i[1] =(i[1] +speed)
+            elif i[2] == 2:   #WS
+                i[0] =(i[0]-speed)
+                i[1] =(i[1] -speed)
+            elif i[2] == 3:   #SE
+                i[0] =(i[0] +speed)
+                i[1] =(i[1] -speed)
+
+            if (i[0]>= xmax) and (i[2] == 3):
+                i[2] = 2
+            elif (i[0]>= xmax) and (i[2] == 0):
+                i[2] = 1
+            if (i[0]<= xmin) and (i[2] == 2):
+                i[2] = 3
+            elif (i[0]<= xmin) and (i[2] == 1):
+                i[2] = 0
+            
+            if (i[1]>=ymax) and (i[2] == 0):
+                i[2] = 3
+            elif (i[1] >= ymax) and (i[2] == 1):
+                i[2] = 2
+            if (i[1] <=ymin) and (i[2] == 2):
+                i[2] = 1
+            elif (i[1] <= ymin) and (i[2] == 3):
+                i[2] = 0
 
 
-
-def specialKeyListener(key, x, y):
-    global speed, direction
-    if key=='w':
-        print(1)
-    if key==GLUT_KEY_UP:
-        speed *= 2
-        print("Speed Increased")
-    if key== GLUT_KEY_DOWN:		
-        speed /= 2
-        print("Speed Decreased")
-    if key== GLUT_KEY_LEFT:		
-        direction -= 1
-        print(direction)
-        print("left")
-    if key== GLUT_KEY_RIGHT:		
-        direction += 1
-        print(direction)
-        print("right")
-    glutPostRedisplay()
 def mouseListener(button, state, x, y):	
     global spawn, ball
     if button==GLUT_LEFT_BUTTON:
         if(state == GLUT_DOWN):
             spawn = True
-            ball += [coordinate(x,y)]
-           
+            ball += [properties(x,y)]           
         
     if button==GLUT_RIGHT_BUTTON:
         if state == GLUT_DOWN: 	
@@ -89,7 +90,7 @@ def keyboardListener(key, x, y):
     global speed
     if key==b' ':
         if speed == 0:
-            speed = 0.1
+            speed = 1
         else:
             speed = 0
         
@@ -127,7 +128,6 @@ glutInitWindowPosition(0, 0)
 wind = glutCreateWindow(b"Lab Assignment 1")  # window name
 glutDisplayFunc(display)
 glutIdleFunc(animate)	
-# glutSpecialFunc(specialKeyListener)
 glutMouseFunc(mouseListener)
 glutKeyboardFunc(keyboardListener)
 

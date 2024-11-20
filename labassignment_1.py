@@ -1,7 +1,7 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-
+import random
 
 
 width = 1440
@@ -84,7 +84,10 @@ def house(x,y,rheight = None):
 
 def rains():
 
+
     for pos in rain_positions:
+        # y1 = random.randint(0,height//2)
+
         lines(pos,pos+direction,y1,(y1)-20)
 
 
@@ -160,11 +163,11 @@ def display():
 
 glutInit()
 glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
-glutInitWindowSize(width, height)  # window size
+glutInitWindowSize(width, height)  
 glutInitWindowPosition(0, 0)
-wind = glutCreateWindow(b"Lab Assignment 1")  # window name
+wind = glutCreateWindow(b"Lab Assignment 1") 
 glutDisplayFunc(display)
-glutIdleFunc(animate)	#what you want to do in the idle time (when no drawing is occuring)
+glutIdleFunc(animate)	
 glutSpecialFunc(specialKeyListener)
 glutMouseFunc(mouseListener)
 
